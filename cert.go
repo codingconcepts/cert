@@ -47,11 +47,11 @@ func getChains(url string) (certs [][]*x509.Certificate, err error) {
 
 func dumpChains(chains [][]*x509.Certificate) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "Issuer\tSHA256")
+	fmt.Fprintln(w, "Issuer\tExpiry\tSHA256")
 	for _, chain := range chains {
 		for _, cert := range chain {
 			raw := sha256.Sum256(cert.Raw)
-			fmt.Fprintf(w, "%s\t%x\n", cert.Issuer.CommonName, raw[:])
+			fmt.Fprintf(w, "%s\t%s\t%x\n", cert.Issuer.CommonName, cert.NotAfter.Format("2006-01-02"), raw[:])
 		}
 	}
 	w.Flush()
